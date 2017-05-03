@@ -1,27 +1,27 @@
-// Final Project: Car Door Alarm
-//
-//Daniel Cerdeira and Nichelle Outlaw
+/*
+CDA3331C Final Project: Car Door Alarm
+By: Daniel Cerdeira & Nichelle Outlaw 
+*/
 
 
 #include <msp430.h> 
-
-int main(void)
-{
-    WDTCTL = WDTPW | WDTHOLD;    // Stop watchdog timer
-
-
-    P1DIR = 0b11111111;  	 // Port 1 direction is set to HIGH
-    P2DIR = 0b00000000;  	   // Port 2 direction is set to LOW
-    P1OUT = 0b00000000;  	//  output
-
-
 
     int BIT_MASK_DOORS = 0b00001111; // Doors initialized to high, carDoors are open
     int BIT_MASK_ALARM = BIT4; 		// Master Lock is set to P2.4
     int Doors = 0;				//Doors is declared
     int Lock = 0; 				//Lock declared
     int NOT_OPEN = 0;			//Declaration
-    while(1)
+int main(void)
+{
+    WDTCTL = WDTPW | WDTHOLD;    // Stop watchdog timer
+
+    P1DIR = 0b11111111;  	 // Port 1 direction is set to HIGH
+    P2DIR = 0b00000000;  	   // Port 2 direction is set to LOW
+    P1OUT = 0b00000000;  	//  output
+
+    __enable_interrupt(); // enables all interrupts
+
+  for(;;)
 
     {
     	Doors = P2IN & BIT_MASK_DOORS; // Doors initialized
@@ -56,7 +56,15 @@ int main(void)
     }
 }
 
+#pragma vector = PORT2_VECTOR
+__interrupt void PORT_2 (void)
+{
+if (Lock == 0) // if lock (i/o) is zero
+{
+	Lock = 1; // then the CPU turns on
 
+}
+}
 
 
 
